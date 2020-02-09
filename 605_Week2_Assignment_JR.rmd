@@ -1,0 +1,52 @@
+---
+title: "605_Week2_Assignment"
+author: "Jeyaraman Ramalingam"
+date: "2/9/2020"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_collapsed: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(Matrix)
+```
+
+## Problem 1
+Below Screenshot shows why $A^TA \ne AA^T$. I have used a $3*2$ matrix and $2*3$ matrix to prove the equation.
+
+![](https://raw.githubusercontent.com/jey1987/DATA605/master/Transpose.jpeg)
+
+For an identity matrix both $A$ and $A^T$ are same. Thats why $A^TA = AA^T$.
+
+## Problem 2
+
+I have used the package Matrix and the functions lu/expand to calculate the L and U values. I have also performed a square matrix check.
+
+```{r matrix_ly, eval=TRUE}
+matrix_Factorize <- function(matrix_input)
+{
+  matrix_Rows <- nrow(A)
+  matrix_Cols <- ncol(A)
+  if(matrix_Rows == matrix_Cols )
+  {
+    lu_Matrix_input <- expand(lu(A,scheme=(ijk)))
+  }
+  else
+    print("Not a Square Matrix")
+  
+  return(lu_Matrix_input)
+}
+
+A = matrix(c(1,3,5,2,4,7,1,1,0),3,3,byrow=T)
+A
+lu_Matrix_input <- matrix_Factorize(A)
+lu_Matrix_input
+(L <- lu_Matrix_input$L)
+L
+(U <- lu_Matrix_input$U)
+U
+```
