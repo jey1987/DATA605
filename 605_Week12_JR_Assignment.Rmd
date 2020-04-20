@@ -1,0 +1,84 @@
+---
+title: "605_Week12_Assignment_JR"
+author: "Jeyaraman Ramalingam"
+date: "4/19/2020"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_collapsed: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Introduction
+
+The dataset is from R preloaded libraries and it consists of speed / distance values.
+
+## Load datasets
+```{r df,eval=TRUE}
+library(ggplot2)
+df<-get("cars")
+df
+```
+## Correlation Coefficient 
+
+Correlation coefficient provides us the relationship between the variables. If it is greater then a strong relationship exists and if it is low then the relationship is weak or none.
+
+```{r correlation,eval=TRUE}
+cor_df<-cor(df$speed, df$dist)
+cor_df  
+```
+
+The Correlation coefficient is ~ 0.8 and this shows speed has strong impact over stopping distance. 
+
+## Linear Model
+
+```{r lm_bmi}
+
+
+lm_speed <- lm(dist ~ speed, data = df)
+
+lm_speed
+
+summary(lm_speed)
+
+
+ggplot(data = df, aes(x = speed, y = dist)) + 
+  geom_point(color='blue') +
+  geom_smooth(method = "lm", se = FALSE)
+
+```
+
+## Plot Residuals
+
+It is necessary to plot residuals and see if there are any variances.
+
+```{r hist_bmi,eval=TRUE}
+hist(lm_speed$residuals)
+```
+
+```{r lm_plot,eval=TRUE}
+qqnorm(lm_speed$residuals)
+qqline(lm_speed$residuals)  
+plot(lm_speed$residuals ~ df$dist)
+
+par(mfrow=c(2,2))
+plot(lm_speed)
+```
+
+## Conclusion
+
+We can conclude by saying that the data satisfies the conditions of linear model. Below are explanations.
+
+**Linearity** - The data is linear as the residuals are following theoretical line.
+
+**Homoscedasticity** - From Scale location plot we can see that the line is horizontal and not angled. This explains the homoscedasticity is satisfied.
+
+**Independence** - Speed and Stopping distance are both independent variables
+
+**Normality** - By looking at the QQ Plot  we can see that the data is distributed normally
+
