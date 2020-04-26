@@ -1,0 +1,201 @@
+---
+title: "605_Week13_JR_Assignment"
+author: "Jeyaraman Ramalingam"
+date: "4/26/2020"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_collapsed: yes
+    toc_float: yes
+---
+
+## Introduction
+
+The attached who.csv dataset contains real-world data from 2008. The variables included follow.
+
+Country: name of the country
+LifeExp: average life expectancy for the country in years
+InfantSurvival: proportion of those surviving to one year or more
+Under5Survival: proportion of those surviving to five years or more
+TBFree: proportion of the population without TB.
+PropMD: proportion of the population who are MDs
+PropRN: proportion of the population who are RNs
+PersExp: mean personal expenditures on healthcare in US dollars at average exchange rate
+GovtExp: mean government expenditures per capita on healthcare, US dollars at average exchange rate
+TotExp: sum of personal and government expenditures.
+
+```{r df,eval=TRUE}
+library(RCurl)
+library(ggplot2)
+
+file_url <- getURL("https://raw.githubusercontent.com/jey1987/DATA605/master/who.csv")
+df_input <- read.csv(text=file_url,header=TRUE)
+```
+
+## Question 1
+
+Provide a scatterplot of LifeExp~TotExp, and run simple linear regression. Do not transform the
+variables. Provide and interpret the F statistics, R^2, standard error,and p-values only. Discuss
+whether the assumptions of simple linear regression met.
+
+### Plots
+
+
+```{r qn_1_scatter,eval=TRUE}
+plot(df_input$LifeExp~df_input$TotExp)
+```
+
+```{r qn_1_lm,eval=TRUE}
+
+lm_life <- lm(df_input$LifeExp~df_input$TotExp)
+summary(lm_life)
+
+par(mfrow=c(2,2))
+plot(lm_life)
+abline(lm_life)
+```
+
+### Measure
+
+**F-Statistics = 65.26**
+
+**R-Square = 0.2537**
+
+**Standard Error = 9.371**
+
+**p-values = 7.714e-14**
+
+### Interpretation
+
+Based on the following conditions of Linear Regression, We can conclude that the data is not providing strong relationship.
+
+
+Linearity - The data is non-linear as the residuals are not following theoretical line.
+
+Homoscedasticity - From Scale location plot we can see that the line is not horizontal and angled. This explains the homoscedasticity is not satisfied.
+
+Independence - Life Expectancy and Total Expenditure are both independent variables
+
+Normality - By looking at the QQ Plot we can see that the data is not distributed normally
+
+## Question 2
+
+Raise life expectancy to the 4.6 power (i.e., LifeExp^4.6). Raise total expenditures to the 0.06
+power (nearly a log transform, TotExp^.06). Plot LifeExp^4.6 as a function of TotExp^.06, and r
+re-run the simple regression model using the transformed variables. Provide and interpret the F
+statistics, R^2, standard error, and p-values. Which model is "better?"
+
+### Plots 
+
+```{r qn_2_scatter,eval=TRUE}
+df_input$LifeExp = df_input$LifeExp^4.6
+df_input$TotExp = df_input$TotExp^0.06
+
+plot(df_input$LifeExp~df_input$TotExp)
+```
+
+```{r qn_2_plot,eval=TRUE}
+
+lm_life <- lm(df_input$LifeExp~df_input$TotExp)
+summary(lm_life)
+
+par(mfrow=c(2,2))
+plot(lm_life)
+abline(lm_life)
+```
+
+### Measure
+
+**F-Statistics = 507.7**
+
+**R-Square = 0.7283**
+
+**Standard Error = 90490000**
+
+**p-values = < 2.2e-16**
+
+### Interpretation
+
+Based on the following conditions of Linear Regression, We can conclude that the data is not providing strong relationship.
+
+
+Linearity - The data is linear as the residuals are following theoretical line.
+
+Homoscedasticity - From Scale location plot we can see that the line is horizontal and not angled. This explains the homoscedasticity is satisfied.
+
+Independence - Life Expectancy and Total Expenditure are independent variables
+
+Normality - By looking at the QQ Plot we can see that the data is distributed normally
+
+By comparing the conditions of linear regression, We can say that Model 2 is better than 1
+
+
+## Question 3
+
+Using the results from 3, forecast life expectancy when TotExp^.06 =1.5. Then forecast life
+expectancy when TotExp^.06=2.5. 
+
+```{r qn_3_predict,eval=TRUE}
+mod <- lm(LifeExp~TotExp,data=df_input)
+newd <- data.frame(TotExp=c(1.5,2.5))
+predict(mod, newd, interval="predict")^(1/4.6)
+```
+
+The Life Expectancy is forecasted at 63 years.
+
+## Question 4
+
+Build the following multiple regression model and interpret the F Statistics, R^2, standard error,
+and p-values. How good is the model?
+
+LifeExp = b0+b1 x PropMd + b2 x TotExp +b3 x PropMD x TotExp
+
+```{r qn_4_mod,eval=TRUE}
+
+file_url <- getURL("https://raw.githubusercontent.com/jey1987/DATA605/master/who.csv")
+df_input <- read.csv(text=file_url,header=TRUE)
+
+mod_new <- lm(LifeExp ~ PropMD + TotExp + PropMD * TotExp,data=df_input)
+summary(mod_new)
+
+par(mfrow=c(2,2))
+plot(mod_new)
+abline(mod_new)
+```
+
+### Measure
+
+**F-Statistics = 34.49**
+
+**R-Square = 0.3471**
+
+**Standard Error = 8.765**
+
+**p-values = < 2.2e-16**
+
+### Interpretation
+
+Based on the following conditions of Linear Regression, We can conclude that the data is not providing strong relationship.
+
+
+Linearity - The data is non-linear as the residuals are not following theoretical line.
+
+Homoscedasticity - From Scale location plot we can see that the line is not horizontal and angled. This explains the homoscedasticity is not satisfied.
+
+Independence - Life Expectancy and Total Expenditure are both independent variables
+
+Normality - By looking at the QQ Plot we can see that the data is not distributed normally
+
+
+## Question 5
+
+Forecast LifeExp when PropMD=.03 and TotExp = 14. Does this forecast seem realistic? Why
+or why not?
+
+```{r qn_5,eval=TRUE}
+newd <- data.frame(PropMD=0.03,TotExp=14)
+predict(mod_new, newd, interval="predict")
+```
+
+The Life Expectancy is forecasted at 107 years, this seems not possible considering the average life of humans is ~ 70.
