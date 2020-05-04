@@ -1,0 +1,213 @@
+---
+title: "605_JR_Week14_Homework"
+author: "Jeyaraman Ramalingam"
+date: "5/3/2020"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_collapsed: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 1
+
+Use integration by substitution to solve the integral below
+
+$$ \int_{}^{}4e^{-7x}dx$$
+
+Let u = -7x then 
+
+du/dx=-7 
+
+Integration equation will become
+
+$$ \int_{}^{}4e^{u}\dfrac{du}{-7}$$
+$$ = \dfrac{-4}{7}*\int_{}^{}4e^{u}du$$
+$$ = \dfrac{-4}{7}*e^u + c$$
+Substitute u = -7x
+
+$$ = \dfrac{-4}{7}*e^-7x + c$$
+
+The Answer is $$\dfrac{-4e^-7x}{7} + c$$
+
+## Question 2
+
+Biologists are treating a pond contaminated with bacteria. The level of contamination is changing at a rate of
+
+$$\dfrac{dN}{dt}=-\dfrac{3150}{t^4}-220$$ 
+
+bacteria per cubic centimeter per day, where t is the number of days since treatment began. Find a
+function N( t ) to estimate the level of contamination if the level after 1 day was 6530 bacteria per cubic centimeter.
+
+Lets start with simplyfying the equation
+
+$$\dfrac{dN}{dt}=-3150t^-4-220$$ 
+Integration of above equation will return the function N(t)
+
+$$N(t)=\int_{}^{}-3150t^-4-220 dt$$
+$$N(t)=\dfrac{-3150t^-3}{-3}-220t +c$$
+$$N(t)={1050t^-3}-220t +c$$
+To find the constant c of the equation we need to use the equation
+
+From the question N(t)=6530, t=1
+
+
+$$6530 = 1050(1)^-3-220(1)+c$$
+$$6530 = 1050-220+c$$
+$$c = 6530 - 830$$
+$$c = 5700$$
+
+Apply c in the N(t) function to get N(t) for the given problem
+
+$$N(t)={1050t^-3}-220t +5700$$
+
+## Question 3
+
+Find the total area of the red rectangles in the figure below, where the equation of the line is $$f(x)=2x-9$$
+
+The red rectangles lower limit is 4.5
+The red rectangles upper limit is 8.5
+
+Integration of the function with the above limits would provide the answer.
+
+```{r area,eval=TRUE}
+gn_funct <- function(x) {2*x-9}
+area_fn <- integrate(gn_funct,4.5,8.5)
+area_fn
+```
+
+The answer is 16 with absolute error < 1.8e-13
+
+## Question 4
+
+Find the area of the region bounded by the graphs of the given equations.
+
+$$y=x^2-2x-2,y=x+2$$
+
+Enter your answer below.
+
+
+Given two equations 
+
+$$y = x^2-2x-2, y = x + 2$$
+
+
+Solving the above equation will provide us the intercept points of the function
+
+x = -2, x = 5
+
+By using the above two points we can plot the graph in R
+
+```{r plot,eval=TRUE}
+limits <- seq(-2,5,0.5)
+
+y1 <- function(x) {x^2-2*x-2}
+y2 <- function(x) {x+2}
+plot(limits, y1(limits), type='l', col="green", xlab="x-Axis", ylab="y-Axis")
+lines(limits, y2(limits), type='l', col="red", xlab="x-Axis", ylab="y-Axis")
+abline(h=0)
+
+```
+
+To find the areas we need to find the intersecting points
+
+The points are -1, 4
+
+Integrating the function with the above limits would provide the areas
+
+```{r area_plot_1,eval=TRUE}
+gn_funct <- function(x) {x^2-2*x-2}
+area_fn <- integrate(gn_funct,-1,4)
+area_fn
+```
+
+The area for the plot $$y=x^2-2x-2$$ is 
+
+-3.333333 with absolute error < 1.2e-13
+
+```{r area_plot_2,eval=TRUE}
+gn_funct <- function(x) {x+2}
+area_fn <- integrate(gn_funct,-1,4)
+area_fn
+```
+
+
+The area for the plot $$y=x+2$$ is 
+
+17.5 with absolute error < 1.9e-13
+
+Total Area = 17.5+3.3 = ~20
+
+
+## Question 5
+
+A beauty supply store expects to sell 110 flat irons during the next year. It costs $3.75 to store one flat iron for one year.
+There is a fixed cost of $8.25 for each order. Find the lot size and the number of orders per year that will minimize
+inventory costs.
+
+
+$$C = 8.25*x+3.75*\dfrac {\dfrac {110}{x}}{2}$$
+
+Simplyfying above would give us
+
+$$C = 8.25*x+\dfrac{206.25}{x}$$
+
+$$C' = 8.25-\dfrac{206.25}{x^2}$$
+
+Let C'=0
+
+$$8.25-\dfrac{206.25}{x^2}=0$$
+$$8.25x^2-206.25=0$$
+$$x^2=206.25/8.25$$
+$$x^2=25$$
+$$x=5$$
+
+Number of orders to minimize inventory costs is 5 and lot size is 110/5 = 22.
+
+## Question 6
+
+Use integration by parts to solve the integral below.
+
+$$ \int_{}^{}ln(9x)x^6dx$$
+
+
+The Integration by parts formula is 
+
+$$ \int_{}^{}udv$$ = uv - $$ \int_{}^{}vdu$$
+
+$$ u = ln(9x) $$
+$$ dv = x^6dx $$
+$$ du/dx = 1/x $$
+$$ v = \int_{}^{}x^6dx $$
+
+
+Substituting above in the formula would give us
+
+$$ \int_{}^{}ln(9x)x^6dx = ln(9x)\int_{}^{}x^6dx -  \int_{}^{}\int_{}^{}x^6dxdx/x$$
+
+Solving the above equation would provide us the final answer
+
+$$\dfrac{x^7}{7}(ln(9x)-\dfrac{1}{7})$$
+
+## Question 7
+
+Determine whether f ( x ) is a probability density function on the interval [1, e^6] . If not, determine the value of the
+definite integral.
+
+$$ f(x)= dfrac{1}{6x}$$
+
+Lets test this by integrating the function with the limits
+
+```{r integ_test,eval=TRUE}
+gn_funct <- function(x) {1/(6*x)}
+area_fn <- integrate(gn_funct,1,exp(6))
+area_fn
+```
+
+The value is 1 which shows the function is PDF within the limits.
+
