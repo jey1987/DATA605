@@ -1,0 +1,37 @@
+---
+title: "605_JR_Week14_Discussion"
+author: "Jeyaraman Ramalingam"
+date: "5/3/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question 
+
+find the arc length of the funcƟon on the given interval
+
+$$f(x)=\dfrac{1}{12}x^5 + \dfrac{1}{5x^3}$$ on [0.1,1]
+
+```{r ans,eval=TRUE}
+
+library(pracma)
+
+gn_funct <- function(x) ({1/12}*x^5+(1/5*x^3))
+gn_funct
+
+x <- seq(0,1,0.1)
+x
+
+plot(x, gn_funct(x), type='l', col="green", xlab="x-Axis", ylab="y-Axis")
+
+len_funct <- function(x) {c(x,gn_funct(x))}
+len_funct
+arc_l <- arclength(len_funct,0.1,1)
+arc_l
+arc_l$length  
+```
+
+The ARC Length  is 0.973
