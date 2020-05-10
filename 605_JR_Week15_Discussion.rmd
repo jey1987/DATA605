@@ -1,0 +1,65 @@
+---
+title: "605_JR_Week15_Discussion"
+author: "Jeyaraman Ramalingam"
+date: "5/10/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Problem 8.8.18 (p496) 
+
+Using Taylor Series Verify sin(-x)=sin(x)
+
+
+```{r verify,eval=TRUE}
+library(pracma)
+
+f1 <- function(x)  sin(-x)
+
+p1 <- round(taylor(f1, 0, 4),2)
+p1
+
+s<- seq(-1.0, 1.0,0.1)
+f1_s <- f1(s)
+
+plt_taylor1 <- polyval(p1, s)
+plot(s, plt_taylor1,type="l",col="red")
+
+f2 <- function(x)  -sin(x)
+
+p2 <- round(taylor(f1, 0, 4),2)
+p2
+
+s<- seq(-1.0, 1.0,0.1)
+f2_s <- f2(s)
+
+plt_taylor2 <- polyval(p2, s)
+plot(s, plt_taylor2,type="l",col="red")
+
+match=0
+err=0
+for (i in 1:4)
+{
+  if(p1[i]==p2[i])
+  {
+    match=match+1
+  }
+  else
+  {
+    err=i
+    break
+  }
+}
+
+if(err==1)
+{
+  print("Functions do not match")
+} else 
+{
+  print("Functions do  match")
+}
+
+```
