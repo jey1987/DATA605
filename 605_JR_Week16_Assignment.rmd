@@ -1,0 +1,133 @@
+---
+title: "605_Week16_JR_Assignment"
+author: "Jeyaraman Ramalingam"
+date: "5/17/2020"
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_collapsed: yes
+    toc_float: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 1
+
+Find the equation of the regression line for the given points. Round any final values to the nearest hundredth, if necessary.
+
+( 5.6, 8.8 ), ( 6.3, 12.4 ), ( 7, 14.8 ), ( 7.7, 18.2 ), ( 8.4, 20.8 )
+
+```{r reg_line,eval=TRUE}
+x <- c(5.6,6.3,7,7.7,8.4)
+y <- c(8.8,12.4,14.8,18.2,20.8)
+
+res<-lm(y~x)
+res
+summary(res)
+plot(x,y)
+abline(res,col="blue")
+```
+
+The Output from the linear regression model shows that the regression line can be written as below
+
+$$-14.8+4.257x$$
+
+## Problem 2
+Find all local maxima, local minima, and saddle points for the function given below. Write your answer(s) in the form
+( x, y, z ). Separate multiple points with a comma.
+
+$$f(x,y)=24x-6xy^{2}-8y^{3}$$
+
+To Solve this , we need to write derivatives and then substitute the values to get the saddle points.
+
+
+$$f(x,y)=24x-6xy^{2}-8y^{3}$$
+$$fx=24-6y^{2}$$
+$$fy=-12xy-24y^{2}$$
+$$fxx=0$$
+$$fyy=-12x-48y$$
+$$fxy=-12y$$
+$$fyx=-12y$$
+
+
+Lets start with fx=0
+
+$$24-6y^{2}=0$$
+$$y=2,y=-2$$
+
+Substituting the y-values in fy equation we get x = 4, x=-4
+
+Substituting both x-values and y-values in the original equation we get the values 64, -64
+
+Hence the Saddle Points are
+
+(4,-2,64) (-4,2,-64)
+
+## Problem 3
+
+A grocery store sells two brands of a product, the "house" brand and a "name" brand. The manager estimates that if she
+sells the "house" brand for x dollars and the "name" brand for y dollars, she will be able to sell 81  21x + 17y units of the
+"house" brand and 40 + 11x  23y units of the "name" brand.
+
+
+###Step 1. Find the revenue function R ( x, y ).
+
+$$R(x,y)=x(81-21x+17y)+y(40+11x-23y)$$
+$$R(x,y)=81x-21x^{2}+17xy+40y+11xy-23y^{2}$$
+$$R(x,y)=81x-21x^{2}+28xy+40y-23y^{2}$$
+Step 2. What is the revenue if she sells the "house" brand for $2.30 and the "name" brand for $4.10?
+
+The Value of x is House Brand which is 2.3 $ and the value for name brand is 4.10$
+
+x = 2.3 , y =4.1
+
+Substiuting the values in revenue function would provide us 
+
+```{r solve,eval=TRUE}
+rev <- function(x,y) {81*x-21*x^2+28*x*y+40*y-23*y^2}
+rev
+x=2.3
+y=4.1
+rev(x,y)
+```
+
+The Output is 116.62 and the total Revenue is ~ 117 dollars.
+
+## Problem 4
+
+A company has a plant in Los Angeles and a plant in Denver. The firm is committed to produce a total of 96 units of a
+product each week. The total weekly cost is given by 
+$$C(x,y)=\dfrac {1}{6}x^{2}+\dfrac {1}{6}y^{2} +7x+25y+700$$
+where x is the number of
+units produced in Los Angeles and y is the number of units produced in Denver. How many units should be produced in
+each plant to minimize the total weekly cost?
+
+
+To Solve this problem we have x+y=96 , where x being the plant in LA and y being the plant in Denver
+
+y=x-96
+
+Substiuting the value of y in equation we will get 
+
+$$\dfrac {1}{6}x^{2}+\dfrac {1}{6}(96-x)^{2} +7x+25(96-x)+700$$
+After calculating derivatives we will get 
+
+$$f`(x)=\dfrac {2}{3}x-50$$
+
+This shows that the value of x is 75 and substiuting the x value in y=96-x=21 , the y-value is 21.
+
+This means that the production units to minimize the total cost in LA is 75 and in Denver is 21.
+
+## Problem 5
+
+$$\underset{R}{\iint} (e^{8x+3y})dA; R:2\leq x\leq 4 , 2\leq y\leq 4$$
+
+$$=\int_{2}^{4} (e^{8x})dx\int_{2}^{4} (e^{3y})dy$$
+
+Solving the above integrals separately we get the below equation
+
+$$=\dfrac {1}{24}(e^{32}-e^{16})(e^{12}-e^{6})$$
+
