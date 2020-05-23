@@ -1,0 +1,336 @@
+---
+title: "605_JR_Final_Exam"
+author: "Jeyaraman Ramalingam"
+date: "5/20/2020"
+output: 
+  html_document:
+    df_print: paged
+    theme: united
+    highlight: tango
+    toc: true
+    toc_float:
+      collapsed: false
+      smooth_scroll: false
+      code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Problem 1
+
+Using R, generate a random variable X that has 10,000 random uniform numbers from 1 to N, where N can be any number of your choosing greater than or equal to 6.  Then generate a random variable Y that has 10,000 random normal numbers with a mean of (N+1)/2.  
+
+Probability.   Calculate as a minimum the below probabilities a through c.  Assume the small letter "x" is estimated as the median of the X variable, and the small letter "y" is estimated as the 1st quartile of the Y variable.  Interpret the meaning of all probabilities.
+
+5 points           a.   P(X>x | X>y)		b.  P(X>x, Y>y)		c.  P(X<x | X>y)				
+
+5 points.   Investigate whether P(X>x and Y>y)=P(X>x)P(Y>y) by building a table and evaluating the marginal and joint probabilities.
+
+5 points.  Check to see if independence holds by using Fisher’s Exact Test and the Chi Square Test.  What is the difference between the two? Which is most appropriate?
+
+
+### Random Variables (X)
+
+```{r random_var, eval=TRUE}
+n <- 6
+mean <- (n+1)/2
+sd <- (n+1)/2
+tot_numbers <- 10000
+random_var <- runif(tot_numbers, min=1, max=n)
+random_var[1:100]
+hist(random_var,main="Histogram for Random Variables ", 
+     xlab="Uniform Numbers", 
+     border="blue", 
+     col="gray",
+     xlim=c(1,6),
+     breaks=6)
+```
+
+### Random Distribution (Y)
+
+```{r random_dist, eval=TRUE}
+n <- 6
+mean <- (n+1)/2
+sd <- (n+1)/2
+tot_numbers <- 10000
+random_dist <- rnorm(tot_numbers, mean=mean, sd=sd)
+random_dist[1:100]
+hist(random_dist,main="Histogram for Random Distribution ", 
+     xlab="Random Distribution", 
+     border="blue", 
+     col="brown",
+     xlim=c(-20,20),
+     breaks=20)
+```
+
+### Probability 
+
+#### a.P(X>x|X>y)
+
+```{r prob_a,eval=TRUE}
+x<-median(random_var)
+x
+y<-quantile(random_dist)[2]
+y
+
+p_a_and_b = sum(random_var>x & random_var>y)
+p_b = sum(random_var>y)
+p_a_given_b = p_a_and_b/p_b
+p_a_given_b
+
+```
+
+#### b.P(X>x,Y>y)
+
+```{r prob_b,eval=TRUE}
+p_a = sum(random_var>x)/length(random_var)
+p_a
+p_b = sum(random_dist>y)/length(random_dist)
+p_b
+p_a_and_b=p_a*p_b
+p_a_and_b
+
+```
+
+#### c.P(X<x|Y<y)
+
+```{r prob_c,eval=TRUE}
+p_a_b = sum(random_var<x & random_var>y)
+p_b = sum(random_var>y)
+p_a_or_b = p_a_b/p_b
+p_a_or_b
+```
+
+### P(X>x and Y>y)=P(X>x)P(Y>y)
+
+```{r investigate,eval=TRUE}
+r1<-sum(random_var<x & random_dist<y)
+r2<-sum(random_var<x & random_dist>y)
+r3<-sum(random_var>x & random_dist<y)
+r4<-sum(random_var>x & random_dist>y)
+
+
+
+prob_table <- data.frame()
+prob_table[1,1]=r1
+prob_table[1,2]=r2
+prob_table[2,1]=r3
+prob_table[2,2]=r4
+prob_table[1,3]=r1+r2
+prob_table[2,3]=r3+r4
+prob_table[3,1]=r1+r3
+prob_table[3,2]=r2+r4
+prob_table[3,3]=r1+r2+r3+r4
+
+colnames(prob_table)<-c("<y",">y","Tot")
+rownames(prob_table)<-c("<x",">x","Tot")
+
+prob_table
+
+p_a_and_b = r4/tot_numbers
+p_a = (r3+r4)/tot_numbers
+p_b = (r2+r4)/tot_numbers
+
+if(round(p_a_and_b,2) == round(p_a*p_b,2))
+{
+  print("Equation is satisfied")
+}
+```
+
+### Fisher's Exact Test
+
+```{r prob_fis,eval=TRUE}
+prob_table_fis <- matrix(c(r1, r3, r2, r4), nrow = 2,
+            dimnames =
+            list(c(">y", "<y"),
+            c(">x", "<x")))
+fis_res<-fisher.test(prob_table_fis)
+fis_res[1]
+```
+
+<strong>
+Interpretation of Test : The p-value is 0.03 which is lesser than 5%. Hence the Null Hypothesis can be rejected in favour of alternative hypothesis. This illustrates that the relationship between the two variables is strong.
+</strong>
+
+### Chi Square Test
+
+```{r chi_sq,eval=TRUE}
+prob_table_fis <- matrix(c(r1, r3, r2, r4), nrow = 2,
+            dimnames =
+            list(c(">y", "<y"),
+            c(">x", "<x")))
+chi_sq<-chisq.test(prob_table_fis)
+chi_sq[3]
+```
+<strong>
+Interpretation of Test : The p-value is 0.03 which is lesser than 5%. Hence the Null Hypothesis can be rejected in favour of alternative hypothesis. This illustrates that the relationship between the two variables is strong.
+
+Comparison between Fisher's and Chi Square : 
+
+For larger sample it is preferred to perform chi-square instead of fisher's exact test. Fisher's test is accurate for smaller samples.
+
+</strong>
+
+## Problem 2
+
+## Descriptive and Inferential Statistics
+
+### Univariate Descriptive Statistics and Plots
+
+```{r univariate,eval=TRUE}
+library(RCurl)
+file_url <- getURL("https://raw.githubusercontent.com/jey1987/DATA605/master/Final_Exam/acs2017_county_data.csv")
+df <- read.csv(text=file_url,header=TRUE)
+df
+
+summary(df$Income)
+library(Hmisc)
+describe(df$Income)
+
+library(ggpubr)
+ggboxplot(df, y = "Income", width = 0.5,color="red")
+gghistogram(df, x = "Income",palette = c("#00AFBB"),fill="lightyellow",rug=TRUE)
+
+ggplot(df, aes(sample = Income,colour="red")) +
+  stat_qq() +
+  stat_qq_line()
+
+```
+
+### ScatterPlot
+
+```{r scatter,eval=TRUE}
+pairs(~df$Income+df$White+df$Black++df$Asian,col="red")
+
+```
+
+### Correlation Plot
+
+```{r corr,eval=TRUE}
+library(RColorBrewer)
+library(corrplot)
+
+cor_df<-data.frame(df$Asian,df$White,df$Black)
+cor <-cor(cor_df,method=c("pearson","kendall","spearman"))
+corrplot(cor, method = "square", type = "upper", tl.col = "black", order = "hclust", col = brewer.pal(n = 5, name = "RdYlBu"))
+```
+
+### Correlation Test 
+
+```{r corr_test,eval=TRUE}
+cor.test(df$White,df$Black,method="pearson",conf.level = 0.80)
+cor.test(df$White,df$Asian,method="pearson",conf.level = 0.80)
+cor.test(df$Black,df$Asian,method="pearson",conf.level = 0.80)
+```
+
+<strong>
+The Correlation Test for different combinations of the population groups provides p-value less than 0.05 which means that the null hypothesis cannot be rejected and hence the relationships between the population groups is weak, Looking at the dataset and type of data we know that the correlation cannot be achieved and the tests shows the same. Since we are testing using 80% confidence interval there could be false predictions and increasing the confidence level will decrease the family wise error.
+</strong>
+
+### Linear Algebra and Correlation
+
+```{r corr_matrix,eval=TRUE}
+library(Matrix)
+library(matlib)
+cor_inv_precision = inv(cor)
+cor_inv_precision
+
+out_matrix <- cor_inv_precision %*% cor
+out_matrix
+
+lu_cor<-lu(cor)
+L_cor<-expand(lu_cor)$L
+L_cor
+U_cor<-expand(lu_cor)$U
+U_cor
+
+lu_cor_inv_precision<-lu(cor_inv_precision)
+L_cor<-expand(lu_cor_inv_precision)$L
+L_cor
+U_cor<-expand(lu_cor_inv_precision)$U
+U_cor
+```
+
+### MASS Function
+
+```{r mass,eval=TRUE}
+library(MASS)
+
+est<-fitdistr(df$IncomeErr,"exponential")
+
+df_est<-data.frame(rexp(1000,est$estimate))
+df_est
+names(df_est)[1] <- "estimate"
+
+gghistogram(df, x = "IncomeErr",palette = c("#00AFBB"),fill="lightgray",rug=TRUE)
+gghistogram(df_est, x = "estimate",palette = c("#00AFBB"),fill="lightblue",rug=TRUE)
+
+
+qexp(0.05,rate = est$estimate,lower.tail = TRUE,log.p = FALSE)
+qexp(0.95,rate = est$estimate,lower.tail = TRUE,log.p = FALSE)
+
+
+mean_Income <- mean(df$IncomeErr)
+sd_Income <- sd(df$IncomeErr)
+qnorm(0.95,mean_Income,sd_Income)
+
+quantile(df$IncomeErr,c(0.05,0.95))
+```
+
+<strong>
+Based on the exponential model we built , the 5% and 95% ranges are matching with the empirical range. Hence the model holds good for this data set. 
+</strong>
+
+
+### Linear Regression Model
+
+```{r linear,eval=TRUE}
+
+lm_out <- lm(df$Income~df$Men+df$Women+df$Hispanic+df$White+df$Black+df$Asian+df$Native+df$Pacific)
+summary(lm_out)
+
+gghistogram(lm_out$residuals,breaks=20,palette = c("#00AFBB"),fill="lightgray")
+
+ggplot(lm_out, aes(sample = lm_out$residuals)) + theme_minimal() + 
+  stat_qq() +
+  stat_qq_line()
+
+par(mfrow=c(2,2))
+plot(lm_out)
+
+```
+
+<strong>
+Based on the following conditions of Linear Regression, We can conclude that the data is  providing strong relationship.
+
+Linearity - The data is linear as the residuals are not following theoretical line.
+
+Homoscedasticity - From Scale location plot we can see that the line is  horizontal and angled. This explains the homoscedasticity is  satisfied.
+
+Independence - Income and the Population groups are  independent variables
+
+Normality - By looking at the QQ Plot we can see that the data is  distributed normally
+</strong>
+
+### Linear Model Testing
+
+```{r model_pred,eval=TRUE}
+file_url <- getURL("https://raw.githubusercontent.com/jey1987/DATA605/master/Final_Exam/acs2017_county_data.csv")
+df <- read.csv(text=file_url,header=TRUE)
+lm_out <- lm(df$Income~df$Men+df$Women+df$Hispanic+df$White+df$Black+df$Asian+df$Native+df$Pacific)
+
+
+file_url <- getURL("https://raw.githubusercontent.com/jey1987/DATA605/master/Final_Exam/acs2015_county_data.csv")
+df_test <- read.csv(text=file_url,header=TRUE)
+
+pred<-predict(lm_out,df_test)
+
+kaggle <- data.frame( Id = df_test[,"CensusId"],  Income=pred)
+kaggle[kaggle<0] <- 0
+kaggle <- replace(kaggle,is.na(kaggle),0)
+write.csv(kaggle, file="kaggle.csv", row.names = FALSE)
+```
+
+
